@@ -19,4 +19,8 @@ object Protocol {
     moderators: Seq[String]) extends Message
 
   case object RequestStatus extends Message
+
+  case class KickUser(name: String) extends Message
+
+  case class Disconnected(message: String) extends Message
 }

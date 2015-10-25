@@ -24,6 +24,9 @@ var Protocol = function(ws) {
     },
     unreadyAll: function() {
       send(buildMsg("UnreadyAll"));
+    },
+    kickUser: function(name) {
+      send(buildMsg("KickUser", { name: name }));
     }
   };
 };

@@ -12,7 +12,13 @@ Room.controller = function(args) {
 
   this.unreadyAll = function() {
     Protocol(self.conn).unreadyAll();
-  }
+  };
+
+  this.kickUser = function(name) {
+    return function() {
+      Protocol(self.conn).kickUser(name);
+    }
+  };
 
   this.isModerator = function(name) {
     return self.status.moderators.indexOf(name) != -1;
@@ -29,6 +35,9 @@ Room.controller = function(args) {
     if (msg.$type == "RoomStatus") {
       console.info("Room update");
       self.status = msg;
+    } else if (msg.$type == "Disconnected") {
+      console.info("Disconnected by server: " + msg.message);
+      alert("Disconnected by server: " + msg.message);
     }
   };
 
@@ -45,6 +54,7 @@ Room.view = function(ctrl) {
   for (var i = 0; i < totalUsers; i++) {
     if (ctrl.status.users[userNames[i]]) readyCount++;
   }
+  var isModerator = ctrl.isModerator(ctrl.name);
 
   return m("div.pure-u-3-5", [
     m("div.room-heading", [
@@ -54,7 +64,7 @@ Room.view = function(ctrl) {
     ]),
     m("ul.room-controls", ([
       // TODO: Filter through ready/not ready
-    ].concat(ctrl.isModerator(ctrl.name) ? [
+    ].concat(isModerator ? [
       m("span", "(moderator)"),
       m("button.pure-button", { onclick: ctrl.unreadyAll }, "Unready All")
     ] : [])).map(function(e) { return m("li", e) })),
@@ -67,6 +77,7 @@ Room.view = function(ctrl) {
       return m("li", [
         m("span", k),
         m("div.status.status-" + (ctrl.status.users[k] ? "ready" : "notready"), " "),
+        isModerator && k != ctrl.name ? m("button.pure-button", { onclick: ctrl.kickUser(k) }, "Kick") : "",
         toggleBtn
       ]);
     }))

@@ -15,6 +15,9 @@ class RoomActor(title: String) extends Actor {
   @inline def broadcast(msg: Message): Unit =
     users.foreach(_._2.ref ! msg)
 
+  @inline def isModerator(r: ActorRef): Boolean =
+    moderators.map(users(_).ref).contains(r)
+
   def receive = {
     case JoinRoom(roomName, name) if roomName == title =>
       users.get(name) match {
@@ -41,7 +44,7 @@ class RoomActor(title: String) extends Actor {
           broadcast(roomStatus(users))
         case None =>
       }
-    case UnreadyAll if moderators.map(users(_).ref).contains(sender()) =>
+    case UnreadyAll if isModerator(sender()) =>
       users = users.mapValues(_.copy(ready = false))
       broadcast(roomStatus(users))
     case RequestStatus => sender() ! roomStatus(users)
@@ -50,6 +53,14 @@ class RoomActor(title: String) extends Actor {
         case Some((name, _)) =>
           moderators = moderators :+ name
           broadcast(roomStatus(users))
+        case None =>
+      }
+    case KickUser(name) if isModerator(sender()) =>
+      users find (_._1 == name) match {
+        case Some((n, d)) if d.ref != sender() =>
+          users = users - name
+          broadcast(roomStatus(users))
+          d.ref ! Disconnected("You have been kicked out of the room.")
         case None =>
       }
   }

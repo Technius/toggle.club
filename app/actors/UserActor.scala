@@ -1,6 +1,6 @@
 package actors
 
-import akka.actor.{ Actor, ActorRef, Props }
+import akka.actor.{ Actor, ActorRef, PoisonPill, Props }
 import scala.util.{ Failure, Try, Success }
 import upickle.default._
 
@@ -19,9 +19,13 @@ class UserActor(name: String, out: ActorRef, manager: ActorRef, roomName: String
   }
   
   def handle(room: ActorRef): Receive = {
+    case msg: Disconnected =>
+      out ! write(msg)
+      self ! PoisonPill
     case msg: Message => out ! write(msg)
     case msg: String =>
       Try(read[Message](msg)) match {
+        case Success(m: Disconnected) =>
         case Success(m) => processMessage(room)(m)
         case Failure(_) =>
       }
@@ -31,6 +35,7 @@ class UserActor(name: String, out: ActorRef, manager: ActorRef, roomName: String
     case m: ChangeReady if m.name == name => room ! m
     case RequestStatus => room ! RequestStatus
     case UnreadyAll => room ! UnreadyAll
+    case m: KickUser => room ! m
     case _ =>
   }
 }
