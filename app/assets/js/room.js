@@ -4,10 +4,18 @@ Room.controller = function(args) {
   var self = this;
   this.name = args.name();
   this.conn = args.conn();
-  this.status = { title: "", users: {} };
+  this.status = { title: "", users: {}, moderators: [] };
 
   this.toggleReady = function() {
     Protocol(self.conn).updateReady(self.name, !self.status.users[self.name]);
+  };
+
+  this.unreadyAll = function() {
+    Protocol(self.conn).unreadyAll();
+  }
+
+  this.isModerator = function(name) {
+    return self.status.moderators.indexOf(name) != -1;
   };
 
   this.conn.onmessage = function(e) {
@@ -44,6 +52,12 @@ Room.view = function(ctrl) {
       m("span.readystats", "(" + readyCount + "/" + totalUsers + " ready)"),
       m("span.username", "You are " + ctrl.name)
     ]),
+    m("ul.room-controls", ([
+      // TODO: Filter through ready/not ready
+    ].concat(ctrl.isModerator(ctrl.name) ? [
+      m("span", "(moderator)"),
+      m("button.pure-button", { onclick: ctrl.unreadyAll }, "Unready All")
+    ] : [])).map(function(e) { return m("li", e) })),
     m("ul.hand-list", userNames.map(function(k) {
       var toggleBtn =
         k == ctrl.name

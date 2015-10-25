@@ -21,6 +21,9 @@ var Protocol = function(ws) {
     },
     updateReady: function(name, newStatus) {
       send(buildMsg("ChangeReady", { name: name, ready: newStatus }));
+    },
+    unreadyAll: function() {
+      send(buildMsg("UnreadyAll"));
     }
   };
 };

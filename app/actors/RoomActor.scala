@@ -7,9 +7,10 @@ import Protocol._
 
 class RoomActor(title: String) extends Actor {
   var users = Map[String, UserState]()
+  var moderators = Seq[String]()
 
   @inline def roomStatus(users: Map[String, UserState]): RoomStatus =
-    RoomStatus(title, users.mapValues(_.ready))
+    RoomStatus(title, users.mapValues(_.ready), moderators)
 
   @inline def broadcast(msg: Message): Unit =
     users.foreach(_._2.ref ! msg)
@@ -40,9 +41,17 @@ class RoomActor(title: String) extends Actor {
           broadcast(roomStatus(users))
         case None =>
       }
-    case UnreadyAll =>
+    case UnreadyAll if moderators.map(users(_).ref).contains(sender()) =>
       users = users.mapValues(_.copy(ready = false))
+      broadcast(roomStatus(users))
     case RequestStatus => sender() ! roomStatus(users)
+    case PromoteUser(ref) =>
+      users.find(_._2.ref == ref) match {
+        case Some((name, _)) =>
+          moderators = moderators :+ name
+          broadcast(roomStatus(users))
+        case None =>
+      }
   }
 }
 
@@ -50,4 +59,6 @@ object RoomActor {
   def props(title: String): Props = Props(new RoomActor(title))
 
   case class UserState(name: String, ref: ActorRef, ready: Boolean = false)
+
+  case class PromoteUser(ref: ActorRef)
 }
