@@ -27,6 +27,8 @@ Login.controller = function(args) {
       };
       ws.onclose = function() {
         console.info("Connection lost");
+        args.conn(null);
+        m.redraw();
       };
     }
   };
