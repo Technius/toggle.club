@@ -26,6 +26,21 @@ pipelineStages in Assets := Seq(concat)
 
 UglifyKeys.enclose in uglify := true
 
+
+dockerRepository := Some("technius")
+
+packageName in Docker := "toggle.club"
+
+dockerUpdateLatest := true
+
+maintainer in Docker := "Bryan Tan <techniux@gmail.com>"
+
+dockerBaseImage := "java:8-jre"
+
+dockerExposedPorts := Seq(9000)
+
+dockerEntrypoint in Docker := Seq("sh", "-c", "bin/toggleclub")
+
 // Play provides two styles of routers, one expects its actions to be injected, the
 // other, legacy style, accesses its actions statically.
 routesGenerator := InjectedRoutesGenerator
