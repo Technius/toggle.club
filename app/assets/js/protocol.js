@@ -27,6 +27,9 @@ var Protocol = function(ws) {
     },
     kickUser: function(name) {
       send(buildMsg("KickUser", { name: name }));
+    },
+    changeRoomLock: function(room, locked) {
+      send(buildMsg("ChangeRoomLock", { room: room, locked: locked }));
     }
   };
 };

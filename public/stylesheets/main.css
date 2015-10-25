@@ -22,6 +22,7 @@
 
 .room-title {
   font-size: 2em;
+  margin-right: 0.5rem;
   height: inherit;
 }
 

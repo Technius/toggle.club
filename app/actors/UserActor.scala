@@ -36,6 +36,7 @@ class UserActor(name: String, out: ActorRef, manager: ActorRef, roomName: String
     case RequestStatus => room ! RequestStatus
     case UnreadyAll => room ! UnreadyAll
     case m: KickUser => room ! m
+    case m: ChangeRoomLock => room ! m
     case _ =>
   }
 }

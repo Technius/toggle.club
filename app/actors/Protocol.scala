@@ -16,11 +16,14 @@ object Protocol {
   case class RoomStatus(
     title: String,
     users: Map[String, Boolean],
-    moderators: Seq[String]) extends Message
+    moderators: Seq[String],
+    locked: Boolean) extends Message
 
   case object RequestStatus extends Message
 
   case class KickUser(name: String) extends Message
 
   case class Disconnected(message: String) extends Message
+
+  case class ChangeRoomLock(room: String, locked: Boolean) extends Message
 }

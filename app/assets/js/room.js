@@ -20,6 +20,12 @@ Room.controller = function(args) {
     }
   };
 
+  this.toggleRoomLock = function(status) {
+    return function() {
+      Protocol(self.conn).changeRoomLock(status.title, !status.locked);
+    }
+  };
+
   this.isModerator = function(name) {
     return self.status.moderators.indexOf(name) != -1;
   };
@@ -56,9 +62,15 @@ Room.view = function(ctrl) {
   }
   var isModerator = ctrl.isModerator(ctrl.name);
 
+  var unlockSettings = isModerator ? {
+    style: { cursor: "pointer" },
+    onclick: ctrl.toggleRoomLock(ctrl.status)
+  } : "";
+
   return m("div.pure-u-3-5", [
     m("div.room-heading", [
       m("span.room-title", ctrl.status.title),
+      m("i.fa.fa-" + (ctrl.status.locked ? "" : "un") + "lock", unlockSettings),
       m("span.readystats", "(" + readyCount + "/" + totalUsers + " ready)"),
       m("span.username", "You are " + ctrl.name)
     ]),

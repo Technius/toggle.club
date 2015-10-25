@@ -8,9 +8,10 @@ import Protocol._
 class RoomActor(title: String) extends Actor {
   var users = Map[String, UserState]()
   var moderators = Seq[String]()
+  var locked = false
 
   @inline def roomStatus(users: Map[String, UserState]): RoomStatus =
-    RoomStatus(title, users.mapValues(_.ready), moderators)
+    RoomStatus(title, users.mapValues(_.ready), moderators, locked)
 
   @inline def broadcast(msg: Message): Unit =
     users.foreach(_._2.ref ! msg)
@@ -20,13 +21,17 @@ class RoomActor(title: String) extends Actor {
 
   def receive = {
     case JoinRoom(roomName, name) if roomName == title =>
-      users.get(name) match {
-        case Some(_) =>
-        case None =>
-          context.watch(sender())
-          val newUsers = users + (name -> UserState(name, sender(), false))
-          broadcast(roomStatus(newUsers))
-          users = newUsers
+      if (locked) {
+        sender() ! Disconnected("This room is locked.")
+      } else {
+        users.get(name) match {
+          case Some(_) =>
+          case None =>
+            context.watch(sender())
+            val newUsers = users + (name -> UserState(name, sender(), false))
+            broadcast(roomStatus(newUsers))
+            users = newUsers
+        }
       }
     case Terminated(ref) =>
       users = users.filterNot(_._2.ref == ref)
@@ -63,6 +68,9 @@ class RoomActor(title: String) extends Actor {
           d.ref ! Disconnected("You have been kicked out of the room.")
         case None =>
       }
+    case ChangeRoomLock(rn, l) if rn == title && isModerator(sender()) =>
+      locked = l
+      broadcast(roomStatus(users))
   }
 }
 
