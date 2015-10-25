@@ -1,6 +1,6 @@
-var WaitingClub = {};
+var ToggleClub = {};
 
-WaitingClub.controller = function() {
+ToggleClub.controller = function() {
   this.name = m.prop("");
   this.conn = m.prop(null);
   this.msgQueue = [];
@@ -11,7 +11,7 @@ WaitingClub.controller = function() {
   };
 };
 
-WaitingClub.view = function(ctrl) {
+ToggleClub.view = function(ctrl) {
   return [
     m("div.pure-u-1-5"),
     ctrl.conn() ? "" : m.component(Login, ctrl.compArgs),
@@ -20,4 +20,4 @@ WaitingClub.view = function(ctrl) {
   ];
 };
 
-m.mount(document.getElementById("app"), WaitingClub);
+m.mount(document.getElementById("app"), ToggleClub);

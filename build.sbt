@@ -1,4 +1,4 @@
-name := """waitingclub"""
+name := """toggleclub"""
 
 version := "1.0-SNAPSHOT"
 
