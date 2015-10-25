@@ -1,0 +1,71 @@
+.header-bar {
+  font-size: 3em;
+  margin-bottom: 1em;
+  border-bottom: 5px solid #FF6201;
+  background-color: #FFB20F;
+  color: white;
+}
+
+#app {
+  padding-top: -2em;
+}
+
+.login-form {
+  padding-left: 0;
+}
+
+.room-heading {
+  border-bottom: 1px solid gray;
+  padding-bottom: 0.5em;
+  height: 2em;
+}
+
+.room-title {
+  font-size: 2em;
+  height: inherit;
+}
+
+.username {
+  float: right;
+  color: gray;
+  position: relative;
+  top: 1em;
+}
+
+.readystats {
+  color: gray;
+  margin-left: 0.5em;
+}
+
+.status {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  margin-left: 0.5em;
+  margin-bottom: 3px;
+  vertical-align: middle;
+}
+
+.status-ready {
+  background-color: lime;
+}
+
+.status-notready {
+  background-color: red;
+}
+
+.hand-list {
+  list-style-type: none;
+  clear: both;
+  padding-left: 0;
+}
+
+.hand-list > li {
+  width: 100%;
+}
+
+.hand-list > li > button {
+  margin-top: -0.5em;
+  float: right;
+}

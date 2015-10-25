@@ -1,0 +1,12 @@
+@()
+
+@main("Hand Raiser") {
+  <div class="pure-g header-bar">
+    <div class="pure-u-1-5"></div>
+    <div class="pure-u-3-5">WAITING CLUB</div>
+    <div class="pure-u-1-5"></div>
+  </div>
+  <div class="pure-g" id="app"></div>
+  <script src="@routes.WebJarAssets.at(WebJarAssets.locate("mithril.js"))"></script>
+  <script src="@routes.Assets.versioned("js/app.js")"></script>
+}
