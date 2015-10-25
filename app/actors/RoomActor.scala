@@ -26,6 +26,7 @@ class RoomActor(title: String) extends Actor {
       } else {
         users.get(name) match {
           case Some(_) =>
+            sender () ! Disconnected("A user with this name has already joined")
           case None =>
             context.watch(sender())
             val newUsers = users + (name -> UserState(name, sender(), false))
