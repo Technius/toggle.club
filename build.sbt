@@ -11,7 +11,7 @@ libraryDependencies ++= Seq(
   cache,
   "com.lihaoyi" %% "upickle" % "0.3.6",
   "org.webjars" %% "webjars-play" % "2.4.0-1",
-  "org.webjars" % "mithril" % "0.2.0",
+  "org.webjars.npm" % "mithril" % "0.2.0",
   "org.webjars.npm" % "purecss" % "0.6.0",
   "org.webjars" % "font-awesome" % "4.4.0"
 )
