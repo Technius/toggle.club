@@ -1,4 +1,4 @@
-package actors
+package club.toggle
 
 object Protocol {
   sealed trait Message

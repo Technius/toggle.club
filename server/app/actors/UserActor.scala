@@ -4,7 +4,7 @@ import akka.actor.{ Actor, ActorRef, PoisonPill, Props }
 import scala.util.{ Failure, Try, Success }
 import upickle.default._
 
-import Protocol._
+import club.toggle.Protocol._
 import UserActor._
 
 class UserActor(name: String, out: ActorRef, manager: ActorRef, roomName: String) extends Actor {

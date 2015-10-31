@@ -2,8 +2,8 @@ package actors
 
 import akka.actor.{ Actor, ActorRef, PoisonPill, Props, Terminated }
 
+import club.toggle.Protocol._
 import RoomActor._
-import Protocol._
 
 class RoomActor(title: String) extends Actor {
   var users = Map[String, UserState]()
