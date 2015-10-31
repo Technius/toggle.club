@@ -17,12 +17,11 @@ object ToggleClubComponent extends Component {
   override val controller: js.Function = () => new Controller
 
   val view: js.Function = (ctrl: Controller) => {
-    val Login = js.Dynamic.global.Login.asInstanceOf[MithrilComponent]
     val Room = js.Dynamic.global.Room.asInstanceOf[MithrilComponent]
 
     js.Array(
       m("div.pure-u-1-5"),
-      if (ctrl.conn() == null) m.component(Login, ctrl.compArgs) else "",
+      if (ctrl.conn() == null) m.component(LoginComponent, ctrl.compArgs) else "",
       if (ctrl.conn() != null) m.component(Room, ctrl.compArgs) else ""
     )
   }
