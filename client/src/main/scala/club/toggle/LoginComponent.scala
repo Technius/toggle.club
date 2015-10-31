@@ -5,6 +5,9 @@ import org.scalajs.dom
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSExportAll
 import scala.scalajs.js.Dynamic.{ literal => json }
+import upickle.default._
+
+import Protocol._
 
 object LoginComponent extends Component {
 
@@ -59,10 +62,7 @@ object LoginComponent extends Component {
       m.redraw()
     }
     ws.onmessage = (e: dom.MessageEvent) => {
-      val obj: js.Dynamic = js.JSON.parse(e.data.asInstanceOf[String])
-      val $type = obj.$type.asInstanceOf[String]
-      obj.$type = $type.substring($type.lastIndexOf(".") + 1)
-      args.msgQueue.push(obj.asInstanceOf[js.Object])
+      args.msgQueue += read[Message](e.data.asInstanceOf[String])
       m.redraw()
     }
     ws.onclose = (_: dom.Event) => {
