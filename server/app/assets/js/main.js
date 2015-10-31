@@ -20,4 +20,4 @@ ToggleClub.view = function(ctrl) {
   ];
 };
 
-m.mount(document.getElementById("app"), ToggleClub);
+// m.mount(document.getElementById("app"), ToggleClub);
