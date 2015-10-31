@@ -9,11 +9,10 @@
   <div class="pure-g" id="app"></div>
   @if(play.api.Play.isProd(play.api.Play.current)) {
   <script src="@routes.WebJarAssets.at(WebJarAssets.locate("mithril.min.js"))"></script>
-  <script src="@routes.Assets.versioned("toggleclub-client-fullopt.js")"></script>
+  <script src="@routes.Assets.versioned("toggleclub-client-opt.js")"></script>
   } else {
   <script src="@routes.WebJarAssets.at(WebJarAssets.locate("mithril.js"))"></script>
   <script src="@routes.Assets.versioned("toggleclub-client-fastopt.js")"></script>
   }
-  <script src="@routes.Assets.versioned("js/app.js")"></script>
   <script>club.toggle.Main().main()</script>
 }

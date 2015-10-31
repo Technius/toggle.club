@@ -34,13 +34,8 @@ lazy val server =
         "org.webjars" % "font-awesome" % "4.4.0"
       ),
       routesGenerator := InjectedRoutesGenerator,
-      Concat.groups := Seq(
-        "js/app.js" -> group(((sourceDirectory in Assets).value / "js") ** "*.js")
-      ),
       scalaJSProjects := Seq(client),
-      pipelineStages := Seq(scalaJSProd, concat, uglify, digest, gzip),
-      pipelineStages in Assets := Seq(concat),
-      UglifyKeys.enclose in uglify := true,
+      pipelineStages := Seq(scalaJSProd, digest, gzip),
       dockerRepository := Some("technius"),
       packageName in Docker := "toggle.club",
       dockerUpdateLatest := true,
