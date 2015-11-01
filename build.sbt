@@ -1,3 +1,5 @@
+import com.typesafe.sbt.packager.docker._
+
 name := """toggleclub"""
 
 version := "1.0-SNAPSHOT"
@@ -40,7 +42,16 @@ lazy val server =
       packageName in Docker := "toggle.club",
       dockerUpdateLatest := true,
       maintainer in Docker := "Bryan Tan <techniux@gmail.com>",
-      dockerBaseImage := "java:8-jre",
+      dockerBaseImage := "anapsix/alpine-java:jre8",
+      dockerCommands := dockerCommands.value flatMap {
+        case cmd @ Cmd("MAINTAINER", _) =>
+          List(
+            cmd,
+            Cmd("RUN", "echo 'hosts: files mdns4_minimal [NOTFOUND=return] dns mdns4' >> /etc/nsswitch.conf"),
+            Cmd("RUN", "apk --update add bash ca-certificates")
+          )
+        case other => List(other)
+      },
       dockerExposedPorts := Seq(9000),
       dockerEntrypoint in Docker := Seq("sh", "-c", "bin/toggleclub")
     )
