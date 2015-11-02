@@ -12,11 +12,11 @@ import Protocol._
 
 object RoomComponent extends Component {
 
-  override val controller: js.Function = (args: LoggedInArgs) => {
+  override val controller: js.Function = (args: Session) => {
     new Controller(args)
   }
 
-  val view: js.Function = (ctrl: Controller, args: LoggedInArgs) => {
+  val view: js.Function = (ctrl: Controller, args: Session) => {
     val ws = args.conn()
     val readyCount = ctrl.status.users.values.count(_ == true)
     val totalUsers = ctrl.status.users.size
@@ -69,7 +69,7 @@ object RoomComponent extends Component {
   }
 
   @JSExportAll
-  class Controller(args: LoggedInArgs) {
+  class Controller(args: Session) {
     var status = RoomStatus(
       title = "",
       users = Map.empty,

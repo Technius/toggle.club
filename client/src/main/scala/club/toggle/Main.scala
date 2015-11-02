@@ -34,12 +34,12 @@ object ToggleClubComponent extends Component {
       val name = Controller.this.name
       val conn = Controller.this.conn
       val msgQueue = Controller.this.msgQueue
-    }).as[LoggedInArgs]
+    }).as[Session]
   }
 }
 
 @ScalaJSDefined
-trait LoggedInArgs extends js.Object {
+trait Session extends js.Object {
   def name: MithrilProp[String]
   def conn: MithrilProp[dom.WebSocket]
   def msgQueue: collection.mutable.Queue[Protocol.Message]

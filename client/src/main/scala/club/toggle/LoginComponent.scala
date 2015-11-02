@@ -13,7 +13,7 @@ object LoginComponent extends Component {
 
   override val controller: js.Function = () => new Controller
 
-  val view: js.Function = (ctrl: Controller, args: LoggedInArgs) => {
+  val view: js.Function = (ctrl: Controller, args: Session) => {
     @inline def input(placeholder: String, prop: MithrilProp[String]) = {
       m("input[type=text]", json(
         placeholder = placeholder,
@@ -44,7 +44,7 @@ object LoginComponent extends Component {
     val room = m.prop("")
   }
 
-  def openConn(ctrl: Controller, args: LoggedInArgs)(e: dom.Event): Unit = {
+  def openConn(ctrl: Controller, args: Session)(e: dom.Event): Unit = {
     e.preventDefault()
 
     if (args.conn() != null) {
