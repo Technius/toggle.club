@@ -64,7 +64,7 @@ class LoginComponent(session: MithrilProp[Session]) extends Component {
     ws.onopen = (_: dom.Event) => {
       println("Connected")
       ctrl.conn(ws)
-      m.redraw()
+      ws.send(write(RequestStatus))
     }
     ws.onmessage = (e: dom.MessageEvent) => {
       val msg = read[Message](e.data.asInstanceOf[String])
@@ -84,6 +84,7 @@ class LoginComponent(session: MithrilProp[Session]) extends Component {
     ws.onclose = (_: dom.Event) => {
       println("Connection lost")
       ctrl.conn(null)
+      m.route("/")
       m.redraw()
     }
   }
