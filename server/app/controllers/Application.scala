@@ -10,7 +10,9 @@ import actors._
 
 class Application @Inject() (implicit system: ActorSystem) extends Controller {
 
-  def index = Action {
+  def spaIgnorePath(path: String) = spa
+
+  def spa = Action {
     Ok(views.html.index())
   }
 

@@ -16,6 +16,7 @@ object Main extends js.JSApp {
       "/" -> new LoginComponent(session)
     ).mapValues(padComponent _)
 
+    m.route.mode = "pathname"
     m.route(dom.document.getElementById("app"), "/")(routes.toSeq: _*)
   }
 
