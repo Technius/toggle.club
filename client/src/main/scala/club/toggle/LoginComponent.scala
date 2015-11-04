@@ -9,11 +9,11 @@ import upickle.default._
 
 import Protocol._
 
-object LoginComponent extends Component {
+class LoginComponent(session: MithrilProp[Session]) extends Component {
 
   override val controller: js.Function = () => new Controller
 
-  val view: js.Function = (ctrl: Controller, args: Session) => {
+  val view: js.Function = (ctrl: Controller) => {
     @inline def input(placeholder: String, prop: MithrilProp[String]) = {
       m("input[type=text]", json(
         placeholder = placeholder,
@@ -22,7 +22,7 @@ object LoginComponent extends Component {
       ))
     }
 
-    val formAttr = json(onsubmit = openConn(ctrl, args) _)
+    val formAttr = json(onsubmit = openConn(ctrl) _)
 
     m("form.login-form.pure-form.pure-form-aligned.pure-u-3-5", formAttr, js.Array(
       m("div.pure-control-group", js.Array(
@@ -31,7 +31,7 @@ object LoginComponent extends Component {
       )),
       m("div.pure-control-group", js.Array(
         m("label", "Name"),
-        input("Name", args.name)
+        input("Name", ctrl.name)
       )),
       m("div.pure-controls", js.Array(
         m("button.pure-button.pure-button-primary", "Connect")
@@ -41,33 +41,49 @@ object LoginComponent extends Component {
 
   @JSExportAll
   class Controller {
+    val name = m.prop("")
     val room = m.prop("")
+    val conn = m.prop[dom.WebSocket](null)
   }
 
-  def openConn(ctrl: Controller, args: Session)(e: dom.Event): Unit = {
+  def openConn(ctrl: Controller)(e: dom.Event): Unit = {
     e.preventDefault()
 
-    if (args.conn() != null) {
-      args.conn().close()
-      args.conn(null)
+    if (ctrl.conn() != null) {
+      ctrl.conn().close()
+      ctrl.conn(null)
     }
 
-    val params = s"room=${ctrl.room()}&name=${args.name()}"
+    val msgQueue = scala.collection.mutable.Queue[Message]()
+    val name = ctrl.name()
+
+    val params = s"room=${ctrl.room()}&name=$name"
     val protocol = if (dom.location.protocol == "http:") "ws:" else "wss:"
     val url = s"$protocol//${dom.location.host}/connect?$params"
     val ws = new dom.WebSocket(url)
     ws.onopen = (_: dom.Event) => {
       println("Connected")
-      args.conn(ws)
+      ctrl.conn(ws)
       m.redraw()
     }
     ws.onmessage = (e: dom.MessageEvent) => {
-      args.msgQueue += read[Message](e.data.asInstanceOf[String])
+      val msg = read[Message](e.data.asInstanceOf[String])
+      msgQueue += msg
+      msg match {
+        case s: RoomStatus =>
+          session(Session(name, ws, msgQueue))
+          m.route("/" + s.title)
+        case Disconnected(msg) =>
+          val dispMsg = "Disconnected by server: " + msg
+          println(dispMsg)
+          dom.window.alert(dispMsg)
+        case _ =>
+      }
       m.redraw()
     }
     ws.onclose = (_: dom.Event) => {
       println("Connection lost")
-      args.conn(null)
+      ctrl.conn(null)
       m.redraw()
     }
   }

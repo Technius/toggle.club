@@ -17,10 +17,10 @@ object RoomComponent extends Component {
   }
 
   val view: js.Function = (ctrl: Controller, args: Session) => {
-    val ws = args.conn()
+    val ws = args.conn
     val readyCount = ctrl.status.users.values.count(_ == true)
     val totalUsers = ctrl.status.users.size
-    val isMod = isModerator(args.name(), ctrl.status.moderators)
+    val isMod = isModerator(args.name, ctrl.status.moderators)
 
     val lockIndicator = {
       val settings =
@@ -51,8 +51,8 @@ object RoomComponent extends Component {
         m("li", js.Array(
           m("span", name),
           m(s"div.status.status-${if(ready) "" else "not"}ready"),
-          if (isMod && args.name() != name) kickBtn else "",
-          if (args.name() == name) toggleBtn else ""
+          if (isMod && args.name != name) kickBtn else "",
+          if (args.name == name) toggleBtn else ""
         ))
       }).toJSArray)
 
@@ -61,7 +61,7 @@ object RoomComponent extends Component {
         m("span.room-title", ctrl.status.title),
         lockIndicator,
         m("span.readystatus", s"($readyCount/$totalUsers ready)"),
-        m("span.username", s"You are ${args.name()}")
+        m("span.username", s"You are ${args.name}")
       )),
       m("ul.room-controls", js.Array() ++ modControls),
       handList
@@ -77,7 +77,7 @@ object RoomComponent extends Component {
       locked = false
     )
 
-    args.conn().onmessage = (e: dom.MessageEvent) => {
+    args.conn.onmessage = (e: dom.MessageEvent) => {
       val msg = read[Message](e.data.asInstanceOf[String])
       handleMessage(msg)
       m.redraw()
@@ -97,7 +97,7 @@ object RoomComponent extends Component {
     while (!args.msgQueue.isEmpty) {
       handleMessage(args.msgQueue.dequeue())
     }
-    if (status.users.isEmpty) args.conn().send(RequestStatus)
+    if (status.users.isEmpty) args.conn.send(RequestStatus)
   }
 
   @inline implicit class SendFunctions(val ws: dom.WebSocket) extends AnyVal {
