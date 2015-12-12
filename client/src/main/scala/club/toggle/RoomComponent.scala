@@ -42,15 +42,30 @@ object RoomComponent extends Component {
       else js.Array[String]()
 
     val handList =
-      m("ul.hand-list", (ctrl.status.users map { case (name, ready) =>
+      m("ul.hand-list", (ctrl.status.users map { case (name, state) =>
         @inline def kickBtn =
           m("button.pure-button", json(onclick = ws.kickUser(name)), "Kick")
         @inline def toggleBtn =
-          m("button.pure-button", json(onclick = ws.toggleReady(name, !ready)), "Toggle")
+          m("button.pure-button", json(onclick = ws.toggleReady(name, !state.ready)), "Toggle")
+        @inline def statusTextEditBtn =
+          m("i.fa.fa-pencil.status-text-btn", json(
+            style = json(cursor = "pointer"),
+            onclick = () => {
+              // TODO: Use an editable
+              val s = dom.window.prompt("Enter your status", state.status)
+              if (s != null) ws.send(ChangeStatus(name, s))
+            }
+          ))
+
+        val statusText = m("span", js.Array(
+          m("span.status-text", if (state.status.isEmpty) "(status not set)" else state.status),
+          if (args.name == name) statusTextEditBtn else ""
+        ))
         
         m("li", js.Array(
           m("span", name),
-          m(s"div.status.status-${if(ready) "" else "not"}ready"),
+          m(s"div.status.status-${if(state.ready) "" else "not"}ready"),
+          statusText,
           if (isMod && args.name != name) kickBtn else "",
           if (args.name == name) toggleBtn else ""
         ))
@@ -113,6 +128,9 @@ object RoomComponent extends Component {
 
     @inline def toggleReady(selfName: String, ready: Boolean) =
       () => send(ChangeReady(selfName, ready))
+
+    @inline def updateStatus(selfName: String, status: String) =
+      () => send(ChangeStatus(selfName, status))
   }
 
   @inline def isModerator(name: String, mods: Seq[String]): Boolean =

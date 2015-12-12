@@ -32,7 +32,8 @@ class UserActor(name: String, out: ActorRef, manager: ActorRef, roomName: String
   }
 
   def processMessage(room: ActorRef): Receive = {
-    case m: ChangeReady if m.name == name => room ! m
+    case m: ChangeReady  if m.name == name => room ! m
+    case m: ChangeStatus if m.name == name => room ! m
     case RequestStatus => room ! RequestStatus
     case UnreadyAll => room ! UnreadyAll
     case m: KickUser => room ! m

@@ -11,11 +11,13 @@ object Protocol {
 
   case class ChangeReady(name: String, ready: Boolean) extends Message
 
+  case class ChangeStatus(name: String, status: String) extends Message
+
   case object UnreadyAll extends Message
 
   case class RoomStatus(
     title: String,
-    users: Map[String, Boolean],
+    users: Map[String, UserState],
     moderators: Seq[String],
     locked: Boolean) extends Message
 
