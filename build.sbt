@@ -4,8 +4,15 @@ name := """toggleclub"""
 
 version := "1.0-SNAPSHOT"
 
+scalaVersion in ThisBuild := "2.11.8"
+
 lazy val sharedSettings = Seq(
-  scalaVersion := "2.11.7"
+  scalacOptions ++= Seq(
+    "-feature",
+    "-deprecation",
+    "-Xlint",
+    "-Xfatal-warnings"
+  )
 )
 
 lazy val root = (project in file(".")).aggregate(client, server)
