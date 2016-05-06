@@ -9,23 +9,16 @@ class WithSession(comp: Component)(implicit session: MithrilProp[Session]) exten
   override val controller: js.Function = () => {
     if (session() == null) {
       dom.window.setTimeout(() => m.route("/", true), 0) // Workaround for bug
-    } else {
-      new Wrapper(comp)
     }
   }
 
-  val view: js.Function = (ctrl: Any) => ctrl match {
-    case wrapper: Wrapper =>
-      wrapper.view.call(wrapper.ctrl, wrapper.ctrl, session())
-    case _ =>
+  val view: js.Function = () => {
+    val s = session()
+
+    if (s != null)
+      m.component(comp, s)
+    else
       m("div")
-  }
-
-  class Wrapper(comp: Component) {
-
-    val ctrl = comp.controller.call(comp.controller, session())
-
-    val view: js.Function = comp.view
   }
 }
 
